@@ -38,7 +38,6 @@
         android:layout_marginTop="16dp"
         app:counterEnabled="true"
         app:counterMaxLength="20"
-        app:endIconMode="clear_text"
         app:errorEnabled="true"
         app:passwordToggleEnabled="true"
         app:startIconDrawable="@drawable/ic_password">
@@ -56,10 +55,10 @@
     <com.google.android.gms.common.SignInButton
         android:id="@+id/input_google"
         android:layout_width="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_height="wrap_content"
         android:layout_below="@id/input_pass"
-        android:layout_marginTop="10dp"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp" />
 
     <Button
         android:id="@+id/signIn"
@@ -79,10 +78,20 @@
         android:text="Don't have an Account?"
         android:textSize="16sp" />
 
-    <ProgressBar
-        android:id="@+id/progresBar"
-        android:layout_centerInParent="true"
+    <TextView
+        android:id="@+id/forgetPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="invisible"/>
+        android:layout_below="@id/newSignUp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="Forget Password"
+        android:textSize="16sp" />
+
+    <ProgressBar
+        android:id="@+id/progresBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="invisible" />
 </RelativeLayout>
