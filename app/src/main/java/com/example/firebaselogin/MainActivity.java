@@ -2,10 +2,12 @@ package com.example.firebaselogin;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,9 +29,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 public class MainActivity extends AppCompatActivity {
-    private EditText pass, emailId;
-    private Button button;
-    private TextView textView;
+    private EditText emailId, password;
+    private Button loginBut;
+    private TextView registerBut;
+    private ProgressBar progressBar;
     private FirebaseAuth firebaseAuth;
     private SignInButton signInButton;
     private GoogleSignInClient mGoogleSignInClient;
@@ -42,21 +45,42 @@ public class MainActivity extends AppCompatActivity {
         init();
 
         firebaseAuth = FirebaseAuth.getInstance();
-        button.setOnClickListener(v -> {
-            if (!emailId.getText().toString().isEmpty() && Patterns.EMAIL_ADDRESS.matcher(emailId.getText().toString()).matches() && !pass.getText().toString().isEmpty()) {
-                firebaseAuth.signInWithEmailAndPassword(emailId.getText().toString(), pass.getText().toString()).addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
+        loginBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String email = emailId.getText().toString();
+                String pass = password.getText().toString();
+
+                if (TextUtils.isEmpty(email)) {
+                    emailId.setError("Email Id can't be empty");
+                    return;
+                }
+                if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                    emailId.setError("Invalid Email Id");
+                    return;
+                }
+                if (TextUtils.isEmpty(pass)) {
+                    password.setError("Password can't be empty");
+                    return;
+                }
+                if (pass.length() < 8) {
+                    password.setError("Password should be atleast 8 character long");
+                    return;
+                }
+
+                progressBar.setVisibility(View.VISIBLE);
+                firebaseAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Intent i = new Intent(getApplicationContext(), Home.class);
                             startActivity(i);
                         } else {
-                            Toast.makeText(getApplicationContext(), "Account not found", Toast.LENGTH_SHORT).show();
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(getApplicationContext(), "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
-            } else {
-                Toast.makeText(getApplicationContext(), "Invalid id or password", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -71,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        textView.setOnClickListener(new View.OnClickListener() {
+        registerBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(), Registration.class));
@@ -84,18 +108,20 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-        if (currentUser != null){
+        if (currentUser != null) {
             Intent i = new Intent(getApplicationContext(), Home.class);
             startActivity(i);
+            finish();
         }
     }
 
     private void init() {
-        textView = findViewById(R.id.newSignUp);
-        pass = findViewById(R.id.pass);
         emailId = findViewById(R.id.emailId);
-        button = findViewById(R.id.signIn);
+        password = findViewById(R.id.pass);
+        loginBut = findViewById(R.id.signIn);
         signInButton = findViewById(R.id.input_google);
+        registerBut = findViewById(R.id.newSignUp);
+        progressBar = findViewById(R.id.progresBar);
     }
 
     private void signIn() {
@@ -111,22 +137,22 @@ public class MainActivity extends AppCompatActivity {
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account.getIdToken());
-            } catch (ApiException e) { }
+            } catch (ApiException e) {
+            }
         }
     }
 
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-        firebaseAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Intent i = new Intent(getApplicationContext(), Home.class);
-                            startActivity(i);
-                        } else {
-                        }
-                    }
-                });
+        firebaseAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    Intent i = new Intent(getApplicationContext(), Home.class);
+                    startActivity(i);
+                } else {
+                }
+            }
+        });
     }
 }

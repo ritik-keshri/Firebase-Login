@@ -22,6 +22,7 @@ public class Home extends AppCompatActivity {
             FirebaseAuth.getInstance().signOut();
             Intent i = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(i);
+            finish();
         });
     }
 }
