@@ -15,16 +15,24 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Registration extends AppCompatActivity {
     private EditText name, emailId, phone, password;
-    Button registerBut;
-    TextView loginBut;
-    ProgressBar progressBar;
-    FirebaseAuth firebaseAuth;
+    private Button registerBut;
+    private TextView loginBut;
+    private ProgressBar progressBar;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseFirestore db;
+    private String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +41,7 @@ public class Registration extends AppCompatActivity {
         init();
 
         firebaseAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
         registerBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,7 +85,15 @@ public class Registration extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Intent i = new Intent(getApplicationContext(), Home.class);
+                            userId = firebaseAuth.getCurrentUser().getUid();
+                            DocumentReference documentReference = db.collection("users").document(userId);
+                            Map<String, Object> user = new HashMap<>();
+                            user.put("name", usrName);
+                            user.put("email", email);
+                            user.put("phone", phoneNumber);
+                            documentReference.set(user);
+                            Toast.makeText(getApplicationContext(), "User Created", Toast.LENGTH_SHORT).show();
+                            Intent i = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(i);
                         } else {
                             progressBar.setVisibility(View.GONE);
