@@ -31,6 +31,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity {
     private EditText emailId, password;
@@ -39,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private FirebaseAuth firebaseAuth;
     private SignInButton signInButton;
+    private FirebaseFirestore fStore;
     private GoogleSignInClient mGoogleSignInClient;
     private final int RC_SIGN_IN = 143;
 
@@ -49,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         init();
 
         firebaseAuth = FirebaseAuth.getInstance();
+        fStore = FirebaseFirestore.getInstance();
         loginBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 if (pass.length() < 8) {
-                    password.setError("Password should be atleast 8 character long");
+                    password.setError("Password should be at least 8 character long");
                     return;
                 }
 
@@ -77,8 +82,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Intent i = new Intent(getApplicationContext(), Home.class);
-                            startActivity(i);
+                            checkUserAccessLevel(task.getResult().getUser().getUid());
                         } else {
                             progressBar.setVisibility(View.GONE);
                             Toast.makeText(getApplicationContext(), "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -127,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(getApplicationContext(), ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -139,6 +143,20 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
                 passwordResetDialog.create().show();
+            }
+        });
+    }
+
+    private void checkUserAccessLevel(String uid) {
+        DocumentReference documentReference = fStore.collection("users").document(uid);
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.getResult().getString("isAdmin") != null)
+                    startActivity(new Intent(getApplicationContext(),Admin.class));
+                else
+                    startActivity(new Intent(getApplicationContext(),Home.class));
+                finish();
             }
         });
     }
@@ -161,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
         loginBut = findViewById(R.id.signIn);
         signInButton = findViewById(R.id.input_google);
         registerBut = findViewById(R.id.newSignUp);
-        frgtPassword=findViewById(R.id.forgetPassword);
+        frgtPassword = findViewById(R.id.forgetPassword);
         progressBar = findViewById(R.id.progresBar);
     }
 
@@ -178,8 +196,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account.getIdToken());
-            } catch (ApiException e) {
-            }
+            } catch (ApiException e) {}
         }
     }
 
@@ -191,7 +208,6 @@ public class MainActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     Intent i = new Intent(getApplicationContext(), Home.class);
                     startActivity(i);
-                } else {
                 }
             }
         });

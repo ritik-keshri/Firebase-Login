@@ -11,23 +11,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:textSize="26sp"
         android:layout_marginBottom="10dp"
-        android:text="Email ID Not Verified"/>
+        android:text="Email ID Not Verified"
+        android:textSize="26sp" />
 
     <Button
         android:id="@+id/verify"
-        android:layout_below="@id/message"
-        android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/message"
+        android:layout_centerHorizontal="true"
         android:text="Verify Now" />
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/profilePic"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_below="@id/verify"
+        android:src="@drawable/ic_user"
         tools:layout_editor_absoluteX="30dp"
         tools:layout_editor_absoluteY="184dp"
         tools:srcCompat="@tools:sample/avatars" />
@@ -38,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/verify"
         android:layout_margin="10dp"
-        android:layout_toEndOf="@id/imageView"
+        android:layout_toEndOf="@id/profilePic"
         android:text="TextView"
         tools:layout_editor_absoluteX="187dp"
         tools:layout_editor_absoluteY="137dp" />
@@ -49,7 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/name"
         android:layout_marginStart="10dp"
-        android:layout_toEndOf="@id/imageView"
+        android:layout_toEndOf="@id/profilePic"
         android:text="TextView"
         tools:layout_editor_absoluteX="190dp"
         tools:layout_editor_absoluteY="184dp" />
@@ -60,10 +61,20 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/emailId"
         android:layout_margin="10dp"
-        android:layout_toEndOf="@id/imageView"
+        android:layout_toEndOf="@id/profilePic"
         android:text="TextView"
         tools:layout_editor_absoluteX="194dp"
         tools:layout_editor_absoluteY="230dp" />
+
+    <Button
+        android:id="@+id/resetPass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/logout"
+        android:layout_centerHorizontal="true"
+        android:text="Reset Password"
+        tools:layout_editor_absoluteX="158dp"
+        tools:layout_editor_absoluteY="341dp" />
 
     <Button
         android:id="@+id/logout"
@@ -73,4 +84,11 @@
         android:text="Logout"
         tools:layout_editor_absoluteX="158dp"
         tools:layout_editor_absoluteY="341dp" />
+
+    <ProgressBar
+        android:id="@+id/progresBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="invisible" />
 </RelativeLayout>

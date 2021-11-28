@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -34,6 +35,7 @@ public class Registration extends AppCompatActivity {
     private TextView loginBut;
     private ProgressBar progressBar;
     private FirebaseAuth firebaseAuth;
+    private FirebaseDatabase firebaseDatabase;
     private FirebaseFirestore db;
     private String userId;
 
@@ -107,10 +109,12 @@ public class Registration extends AppCompatActivity {
                             user.put("name", usrName);
                             user.put("email", email);
                             user.put("phone", phoneNumber);
+                            user.put("isAdmin","0");
                             documentReference.set(user);
                             Toast.makeText(getApplicationContext(), "User Created", Toast.LENGTH_SHORT).show();
                             Intent i = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(i);
+                            progressBar.setVisibility(View.GONE);
                         } else {
                             progressBar.setVisibility(View.GONE);
                             Toast.makeText(getApplicationContext(), "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
