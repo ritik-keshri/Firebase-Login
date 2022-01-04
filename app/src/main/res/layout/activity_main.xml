@@ -17,6 +17,7 @@
         app:counterEnabled="true"
         app:counterMaxLength="30"
         app:errorEnabled="true"
+        app:endIconMode="clear_text"
         app:startIconDrawable="@drawable/ic_email">
 
         <EditText

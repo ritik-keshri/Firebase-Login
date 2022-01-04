@@ -17,6 +17,7 @@
         android:layout_marginBottom="-9dp"
         app:counterEnabled="true"
         app:counterMaxLength="30"
+        app:endIconMode="clear_text"
         app:errorEnabled="true"
         app:startIconDrawable="@drawable/ic_user">
 
@@ -38,6 +39,7 @@
         android:layout_above="@id/input_phone"
         android:layout_marginTop="16dp"
         app:counterEnabled="true"
+        app:endIconMode="clear_text"
         app:counterMaxLength="30"
         app:errorEnabled="true"
         app:startIconDrawable="@drawable/ic_email">
